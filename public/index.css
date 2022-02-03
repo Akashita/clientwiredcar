@@ -1,0 +1,91 @@
+#hero{
+    position: relative;
+    background-image: url("assets/hero.png");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 50vh;
+    padding-bottom: 120px;
+}
+
+main{
+    background-color: white;
+    min-height: 100vh;
+}
+
+#searchBar{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#carForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 5px 5px 20px;
+    background-color: white;
+    border-radius: 100px;
+}
+
+#submitCar{
+    background-color: rgba(0,0,0,0.2);
+
+}
+
+#carForm:focus{
+    border-radius: 0;
+}
+
+#carForm input, #carForm button{
+    height: 40px;
+    outline: none;
+    border: none;
+}
+
+#submitCar{
+    margin-left: 15px;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    width: 60px;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#submitCar:hover{
+    background-color: rgba(0,0,0,0.1);
+
+}
+
+#resultContainer{
+    top: 70px;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    border-radius: 20px;
+    overflow-y: auto;
+
+}
+
+.result{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    width: 100%;
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.result:hover{
+    background-color: rgb(240,240,240);
+    cursor: pointer;
+}
+
+.result:last-child{
+    border-bottom: none;
+}

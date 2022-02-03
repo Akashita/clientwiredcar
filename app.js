@@ -4,12 +4,13 @@ module.exports = app;
 
 app.use(express.static(__dirname + '/public'));
 app.use('/bs', express.static(__dirname + '/node_modules/bootstrap/dist'));
+app.use('/jq', express.static(__dirname + '/node_modules/jquery/dist'));
 
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     next();
 });
 

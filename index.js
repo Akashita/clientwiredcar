@@ -21,9 +21,11 @@ app.listen(port, () => {            //server starts listening for any attempts f
 
 var soap = require('strong-soap').soap;
 var url = 'http://127.0.0.1:8000/?wsdl';
+/*
 
 soap.createClient(url, function(err, client) {
     client.get_electric_cars({}, function(err, result) {
         console.log(result.get_electric_carsResult);
     });
 });
+*/

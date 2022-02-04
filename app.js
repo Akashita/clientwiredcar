@@ -14,6 +14,25 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/api/get-cars',(req,res) => {
+    var soap = require('strong-soap').soap;
+    var url = 'https://soapwiredcar.herokuapp.com/soapapi?wsdl';
+
+    /*
+    soap.createClient(url, function(err, client) {
+        client.get_electric_cars({}, function(err, result) {
+            console.log(result.get_electric_carsResult);
+        });
+       client.echo({str:"ergiue", cnt : 5}, function(err, result){
+              console.log(result.echoResult);
+       });
+    });
+    */
+    var obj = [{"id":1,"name":"Tesla","range":200},{"id":2,"name":"BMW","range":300}];
+
+    res.send(JSON.stringify(obj));
+});
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });

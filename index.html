@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/fav.png">
     <link rel="stylesheet" href="bs/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="index.css">
     <script src="jq/jquery.min.js"></script>
@@ -21,7 +22,7 @@
         <div class="heroContent"></div>
         <div id="searchBar">
             <form id="carForm">
-                <input type="text" placeholder="Choisir la voiture" class="search-bar" onchange=""/>
+                <input type="text" id="searchInput" autocomplete="off" placeholder="Choisir la voiture" class="search-bar"/>
                 <!--
                 <div class="spinner-border" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -34,11 +35,8 @@
                 </button>
             </form>
             <div id="resultContainer">
-                <div class="result">Tesla model X lore</div>
+                <div class="result">No result</div>
                 <div class="result">Volvo XC30</div>
-       
-
-
             </div>
         </div>
     </header>

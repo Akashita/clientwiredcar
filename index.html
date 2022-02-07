@@ -7,43 +7,54 @@
     <link rel="icon" href="assets/fav.png">
     <link rel="stylesheet" href="bs/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script src="jq/jquery.min.js"></script>
     <title>Document</title>
 </head>
 <body>
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1">WiredCar</span>
-        </div>
-    </nav>
-    
 
-    <header class="jumbotron d-flex align-items-center justify-content-center" id="hero">
-        <div class="heroContent"></div>
-        <div id="searchBar">
-            <form id="carForm">
-                <input type="text" id="searchInput" autocomplete="off" placeholder="Choisir la voiture" class="search-bar"/>
-                <!--
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                  </div>
-                -->
-                <button type="button" id="submitCar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
-                    </svg>
-                </button>
-            </form>
-            <div id="resultContainer">
-                <div class="result">No result</div>
-                <div class="result">Volvo XC30</div>
+    <header class="jumbotron" id="hero">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1">WiredCar</span>
+            </div>
+        </nav>
+        <div class="heroContent  d-flex align-items-center justify-content-center">
+            <div id="searchBar">
+                <form id="carForm">
+                    <div class="inputContainer">
+                        <input type="text" id="searchCar" autocomplete="off" placeholder="Choose the car" class="search-bar"/>
+                        <div id="carResult" class="resultContainer">
+                        </div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <input type="text" id="searchDeparture" autocomplete="off" placeholder="Departure" class="search-bar"/>
+                        <div id="departureResult" class="resultContainer">
+                        </div>
+                    </div>
+                    
+                    <div class="inputContainer">
+                        <input type="text" id="searchArrival" autocomplete="off" placeholder="Arrival" class="search-bar"/>
+                        <div id="arrivalResult" class="resultContainer">
+                        </div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <button type="button" id="submitCar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </header>
     <main>
-
-
-    </main>
+        <div id="map"></div> 
+     </main>
     <script src="index.js"></script>
 </body>
 </html>

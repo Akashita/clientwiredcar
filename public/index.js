@@ -1,6 +1,9 @@
 
 const rest_api_url = "https://restwiredcar.herokuapp.com/traveltime";
 const soap_middleware_url = "/api/get-cars";
+const getpath_middleware_url = "/api/get-path";
+const getlocality_middleware_url = "/api/get-locality";
+
 
 
 jQuery(function(){
@@ -14,53 +17,112 @@ jQuery(function(){
         contentType: "application/json",
         dataType: "json",
         success: function(data){
-            console.log(data);        
         }
     });
 
 
     /*SOAP API ############################################*/
-    $.ajax({
-        url: soap_middleware_url,
-        contentType: "application/json",
-        dataType: "json",
-        success: function(data){
-            console.log(data);        
+
+    fillFormResult("#searchCar", "#carResult", getpath_middleware_url);
+
+    /*DEPARTURE ###########################################*/
+
+    fillFormResult("#searchDeparture", "#departureResult", getlocality_middleware_url);
+
+    /*ARRIVAL #############################################*/
+
+    fillFormResult("#searchArrival", "#arrivalResult", getlocality_middleware_url);
+
+
+    /*MAP #############################################*/
+
+    var map;
+
+    $('#submitCar').on('click', function(e){
+        if(! $('#map').hasClass('active')){
+            //Get node API
+            $.ajax({
+                url: getpath_middleware_url,
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data){
+                    showMap(data['features'][0]);       
+                },
+                error: function(data){
+                    console.log("ERROR" + data);
+                }
+            });
+
+            
         }
     });
-
-
-    $('#searchInput').on('keyup paste', function(e){
-        var search_text = $('#searchInput').val();
-        $.ajax({
-            url: soap_middleware_url,
-            contentType: "application/json",
-            dataType: "json",
-            success: function(data){
-                console.log(data);
-                if(data != false){
-                    $('#resultContainer').html("");
-                    if(data.length == 0){
-                        $('#resultContainer').html("<div class=\"result\">No results</div>");
-                    } else {
-                        data.forEach(car => {
-                            $('#resultContainer').append("<div class=\"result\">" + car['name'] + "</div>");
-                        });
-                    }
-                } else {
-                    $('#resultContainer').html("<div class=\"result\">Query issue</div>");
-                }
-                
-            }
-        });
-    });
-
 
 });
 
 
 
+// #############################################################
+//                  Functions
+// #############################################################
+function showMap(geojson){
+    $( "#map" ).animate({
+        height: "100vh",
+      }, 300, function() {
+        $('#map').addClass('active');
+
+        map = L.map('map', {
+            /*args*/
+        });
 
 
+        var pathLayer = L.geoJSON(geojson).addTo(map);
+        map.fitBounds(pathLayer.getBounds());
 
 
+        //Center the map on the path
+        //map.fitBounds(geojson.getBounds());
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+
+        L.scrollWheelZoom = false;
+    
+      });
+      $( "html" ).animate({
+        scrollTop: window.innerHeight,
+      }, 300, function() {
+        // Animation complete.
+      });
+}
+
+
+function fillFormResult(searchId, resultId, middlewareUrl){
+    $(searchId).on('keyup paste', function(e){
+        var search_text = $(searchId).val();
+        $.ajax({
+            url: middlewareUrl,
+            contentType: "application/json",
+            dataType: "json",
+            data: {
+                text: search_text
+            },
+            success: function(data){
+                if(data != false){
+                    $(resultId).html("");
+                    if(data.length == 0){
+                        $(resultId).html("<div class=\"result\">No results</div>");
+                    } else {
+                        data.forEach(car => {
+                            $(resultId).append("<div class=\"result\">" + car['name'] + "</div>");
+                        });
+                    }
+                } else {
+                    $(resultId).html("<div class=\"result\">Query issue</div>");
+                }
+                
+            }
+        });
+    });
+}

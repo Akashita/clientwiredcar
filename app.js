@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const app = express();
 module.exports = app;
 
@@ -32,6 +33,43 @@ app.use('/api/get-cars',(req,res) => {
 
     res.send(JSON.stringify(obj));
 });
+
+app.use('/api/get-path',(req,res) => {
+    const data = {"coordinates":[[8.681495,49.41461],[8.686507,49.41943],[8.687872,49.420318]]};
+    const url = "https://api.openrouteservice.org/v2/directions/driving-car/geojson";
+    const config = {
+        headers: {
+            Authorization:  "5b3ce3597851110001cf6248118c93613b444126b3434702f7925bed",
+            Accept: "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
+            'Content-Type': "application/json; charset=utf-8",
+
+        }
+    }
+    axios.post(url, data, config).then(response => {
+        console.log(response.data);
+        res.send(JSON.stringify(response.data));
+    }).catch(error => {        
+        console.log(error);
+    });
+});
+
+app.use('/api/get-locality',(req,res) => {
+    const url = "https://api.openrouteservice.org/geocode/search";
+    const config = {
+        params: {
+            api_key: "5b3ce3597851110001cf6248118c93613b444126b3434702f7925bed",
+            text: "3 chemin des vignes 01200 longeray",
+            layers: "address,locality"
+        }
+    }
+    axios.get(url, config).then(response => {
+        console.log(response.data);
+        res.send(JSON.stringify(response.data));
+    }).catch(error => {        
+        console.log(error);
+    });
+});
+
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');

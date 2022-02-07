@@ -4,13 +4,17 @@
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    height: 50vh;
-    padding-bottom: 120px;
+    min-height: 100vh;
 }
+
+.heroContent{
+    padding: 100px 0 300px 0;
+    height: 100%;
+}
+
 
 main{
     background-color: white;
-    min-height: 100vh;
 }
 
 #searchBar{
@@ -23,11 +27,13 @@ main{
 
 #carForm{
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 5px 5px 5px 20px;
-    background-color: white;
-    border-radius: 100px;
+}
+
+.inputContainer{
+    position: relative;
+    margin: 20px;
 }
 
 #submitCar{
@@ -39,16 +45,19 @@ main{
     border-radius: 0;
 }
 
-#carForm input, #carForm button{
+.inputContainer input{
+    padding: 5px 5px 5px 20px;
+    background-color: white;
+    border-radius: 100px;
     height: 40px;
     outline: none;
     border: none;
 }
 
 #submitCar{
-    margin-left: 15px;
     border: 1px solid rgba(0,0,0,0.1) !important;
     width: 60px;
+    height: 40px;
     background-color: white;
     border-radius: 100px;
     display: flex;
@@ -61,13 +70,15 @@ main{
 
 }
 
-#resultContainer{
-    top: 70px;
+.resultContainer{
+    top: 50px;
     position: absolute;
     width: 100%;
     max-height: 200px;
     border-radius: 20px;
     overflow-y: auto;
+    background-color: white;
+
 
 }
 
@@ -77,7 +88,6 @@ main{
     justify-content: flex-start;
     padding: 10px;
     width: 100%;
-    background-color: white;
     border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
@@ -88,4 +98,9 @@ main{
 
 .result:last-child{
     border-bottom: none;
+}
+
+#map { 
+    height: 0; 
+    width: 100%;
 }

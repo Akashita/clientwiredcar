@@ -8,44 +8,57 @@
     <link rel="stylesheet" href="bs/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="index.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <link rel="stylesheet" href="//unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet"> 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script src="jq/jquery.min.js"></script>
+    <script src="//unpkg.com/leaflet-gesture-handling"></script>
+    <script src="bs/js/bootstrap.min.js"></script>
     <title>Document</title>
 </head>
 <body>
 
     <header class="jumbotron" id="hero">
-        <nav class="navbar navbar-light bg-light">
+        <nav class="navbar navbar-light">
             <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1">WiredCar</span>
+                <span class="navbar-brand mb-0 h1 title">WiredCar</span>
+                <a href="https://github.com/Akashita/clientwiredcar" class="btn btn-light shadow-sm my-2 my-sm-0">
+                    <img src="assets/github.png" alt="" width="24" height="24" class="d-inline-block align-text-top">
+                    <span> Swan Launay</span>
+                </a>
             </div>
         </nav>
         <div class="heroContent  d-flex align-items-center justify-content-center">
+            <div class="mainTitle">
+                <h1 class="title">WiredCar</h1>
+                <h2 class="ms-5 small">A simple GPS for electric cars</h2>
+            </div>
             <div id="searchBar">
                 <form id="carForm">
                     <div class="inputContainer">
-                        <input type="text" id="searchCar" autocomplete="off" placeholder="Choose the car" class="search-bar"/>
+                        <input type="text" data-props='' id="searchCar" autocomplete="off" placeholder="Choose your car ..." class="search-bar shadow-sm"/>
                         <div id="carResult" class="resultContainer">
                         </div>
                     </div>
 
                     <div class="inputContainer">
-                        <input type="text" id="searchDeparture" autocomplete="off" placeholder="Departure" class="search-bar"/>
+                        <input type="text" data-props='' id="searchDeparture" autocomplete="off" placeholder="... your departure ..." class="search-bar shadow-sm"/>
                         <div id="departureResult" class="resultContainer">
                         </div>
                     </div>
                     
                     <div class="inputContainer">
-                        <input type="text" id="searchArrival" autocomplete="off" placeholder="Arrival" class="search-bar"/>
+                        <input type="text" data-props='' id="searchArrival" autocomplete="off" placeholder="... and your arrival" class="search-bar shadow-sm"/>
                         <div id="arrivalResult" class="resultContainer">
                         </div>
                     </div>
 
                     <div class="inputContainer">
-                        <button type="button" id="submitCar">
+                        <button type="button" id="submitForm" class="shadow-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
                             </svg>
+                            <div class="spinner-grow text-secondary" style="display: none; width:10px; height:10px;" role="status"></div>
                         </button>
                     </div>
                 </form>
@@ -54,7 +67,40 @@
     </header>
     <main>
         <div id="map"></div> 
+        <div id="recapContainer">
+            <div class="card" id="journeyCard" style="width: 18rem;">
+                <img class="card-img-top" src="assets/cardHeader.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Here is your journey... </h5>
+                    <p class="card-text">We have chosen the shortest route for you, be careful on the road and take care of yourself !</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" id="journeyDeparture">Departure :</li>
+                    <li class="list-group-item" id="journeyArrival">Arrival :</li>
+                    <li class="list-group-item" id="journeyTime"><b>Travel time (with stops) : </b></li>
+                </ul>
+            </div>
+
+            <div class="card" id="carCard" style="width: 18rem;">
+                <img class="card-img-top" src="" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">... and your car</h5>
+                    <p class="card-text">Here are some interesting facts about your car.</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" id="carModel"><b>Model : </b></li>
+                    <li class="list-group-item" id="carAutonomy"><b>Autonomy : </b></li>
+                    <li class="list-group-item" id="carChargingTime"><b>Charging time : </b></li>
+                </ul>
+            </div>     
+        </div>
      </main>
+     <!-- TOAST-->
+    <div class="position-fixed bottom-0 end-0 p-3 toast-container" style="z-index: 11">
+
+
+    </div>
+
     <script src="index.js"></script>
 </body>
 </html>

@@ -1,8 +1,11 @@
 const express = require('express');
 const axios = require('axios');
+const turf = require('@turf/turf');
+const { json } = require('express');
 const app = express();
 module.exports = app;
 
+app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 app.use('/bs', express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use('/jq', express.static(__dirname + '/node_modules/jquery/dist'));
@@ -29,97 +32,119 @@ app.use('/api/get-cars',(req,res) => {
        });
     });
     */
-    var obj = [{"id":1,"name":"Tesla","range":200},{"id":2,"name":"BMW","range":300}];
-
-    res.send(JSON.stringify(obj));
+    var obj = [{name:"Tesla",props: {model: "Tesla model 3", chargingtime: 20*60, autonomy: 250, img: 'https://www.automobile-magazine.fr/asset/cms/840x394/191795/config/139739/la-tesla-model-3.webp?webp=1'}}];
+    res.send(obj);
 });
 
-app.use('/api/get-path',(req,res) => {
-    const data = {"coordinates":[[8.681495,49.41461],[8.686507,49.41943],[8.687872,49.420318]]};
-    const url = "https://api.openrouteservice.org/v2/directions/driving-car/geojson";
-    const config = {
-        headers: {
-            Authorization:  "5b3ce3597851110001cf6248118c93613b444126b3434702f7925bed",
-            Accept: "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
-            'Content-Type': "application/json; charset=utf-8",
-
+app.post('/api/get-path',(req,res) => {
+    if(Object.keys(req.body).length === 0 && req.body.constructor === Object){
+        res.status(400).send(false);
+    } else {
+        var coordArray = [req.body.departureProps, req.body.arrivalProps];
+        var carAutonomy = req.body.carAutonomy;
+        var dataRoute = {"coordinates": coordArray};
+        const urlRoute = "https://api.openrouteservice.org/v2/directions/driving-car/geojson";
+        const configRoute = {
+            headers: {
+                Authorization:  "5b3ce3597851110001cf6248118c93613b444126b3434702f7925bed",
+                Accept: "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
+                'Content-Type': "application/json; charset=utf-8",
+    
+            }
         }
+        axios.post(urlRoute, dataRoute, configRoute).then(async function(response) {
+            var line = response.data['features'][0];
+            var it = Math.floor(turf.length(line, 'kilometers') / carAutonomy);
+
+            const radius = 50;
+            const urlBornes = "https://opendata.reseaux-energies.fr/api/records/1.0/search/";
+            const configBornes = {
+                headers: {
+                    Authorization:  "e80cbbd8b5b39d95eaeb95bad16178e7e6da64f17ee430bc6608c538",
+                    Accept: "application/json, charset=utf-8"
+                }
+            }
+
+            var bornes = [];
+            var bornesCoords = [];
+
+            for(var i = 1; i <= it; i++){
+                var point = turf.along(line, i * carAutonomy, 'kilometers');
+                const dataBornes = {
+                    params: {
+                        dataset: "bornes-irve",
+                        'geofilter.distance': point.geometry.coordinates[1] + "," + point.geometry.coordinates[0] + "," + radius*1000,
+                    }
+                };
+                try{
+                    await axios.get(urlBornes, dataBornes, configBornes).then(response => {
+                        var shortestBorneFeature = response.data.records[0];
+                        var shortestBorneCoords = shortestBorneFeature.geometry.coordinates;
+
+                        response.data.records.forEach(function(record){
+                            if(turf.distance(record.geometry.coordinates, point, 'kilometers') < turf.distance(shortestBorneCoords, point, 'kilometers')){
+                                shortestBorneFeature = record;
+                                shortestBorneCoords = shortestBorneFeature.geometry.coordinates;
+                            }
+                        });
+                        bornes.push(shortestBorneFeature);
+                        bornesCoords.push(shortestBorneCoords);
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                } catch(error){
+                    console.log(error);
+                }
+
+            }
+            dataRoute = {"coordinates": [coordArray[0]].concat(bornesCoords).concat([coordArray[1]])};
+            axios.post(urlRoute, dataRoute, configRoute).then(response => {
+                res.send(JSON.stringify([response.data, bornes]));
+            }).catch(error => {
+                console.log(error);
+                res.status(400).send(false);
+            });
+        }).catch(error => {   
+            console.log(error);     
+            res.status(400).send(false);
+        });
     }
-    axios.post(url, data, config).then(response => {
-        console.log(response.data);
-        res.send(JSON.stringify(response.data));
-    }).catch(error => {        
-        console.log(error);
-    });
+
 });
 
-app.use('/api/get-locality',(req,res) => {
-    const url = "https://api.openrouteservice.org/geocode/search";
-    const config = {
-        params: {
-            api_key: "5b3ce3597851110001cf6248118c93613b444126b3434702f7925bed",
-            text: "3 chemin des vignes 01200 longeray",
-            layers: "address,locality"
+
+app.post('/api/get-locality',(req,res) => {
+
+    if(req.body != null && req.body.search_text){
+        var text = req.body.search_text;
+        const url = "https://api.openrouteservice.org/geocode/search";
+        const data = {
+            params: {
+                api_key: "5b3ce3597851110001cf6248118c93613b444126b3434702f7925bed",
+                text: text,
+                layers: "address,locality"
+            }
         }
+        axios.get(url, data).then(response => {
+            var response_data = [];
+            response.data.features.forEach(feature => {
+                locality = {
+                    "name": feature.properties.label,
+                    "props": feature.geometry.coordinates,
+                }
+                response_data.push(locality);
+            });
+            res.send(JSON.stringify(response_data));
+        }).catch(error => {        
+            console.log(error);
+        });
+    } else {
+        res.send(false);
     }
-    axios.get(url, config).then(response => {
-        console.log(response.data);
-        res.send(JSON.stringify(response.data));
-    }).catch(error => {        
-        console.log(error);
-    });
+
 });
 
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
-
-
-
-//https://restwiredcar.herokuapp.com/traveltime/1500/500/150/30
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-const express = require('express'); //Import the express dependency
-const app = express();              //Instantiate an express app, the main work horse of this server
-const port = process.env.PORT || 5000
-
-
-app.use(express.static(__dirname + '/public'));
-app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
-app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
-app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
-
-
-app.get('/', (req, res) => {        //get requests to the root ("/") will route here
-    res.sendFile('index.html', {root: __dirname});      //server responds by sending the index.html file to the client's browser
-                                                        //the .sendFile method needs the absolute path to the file, see: https://expressjs.com/en/4x/api.html#res.sendFile 
-});
-
-app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
-    console.log(`Now listening on port ${port}`); 
-});
-
-
-var soap = require('strong-soap').soap;
-var url = 'http://127.0.0.1:8000/?wsdl';
-
-
-soap.createClient(url, function(err, client) {
-    client.get_electric_cars({}, function(err, result) {
-        console.log(result.get_electric_carsResult);
-    });
-});
-*/

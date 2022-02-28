@@ -46,7 +46,10 @@ app.post('/api/get-path',(req,res) => {
         res.status(400).send(false);
     } else {
         var coordArray = [req.body.departureProps, req.body.arrivalProps];
-        var carAutonomy = req.body.carAutonomy;
+
+        const delta = 20; //delta of kilometers to keep a margin of error
+        var carAutonomy = req.body.carAutonomy - delta;
+
         var dataRoute = {"coordinates": coordArray};
         const urlRoute = "https://api.openrouteservice.org/v2/directions/driving-car/geojson";
         const configRoute = {

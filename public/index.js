@@ -58,8 +58,7 @@ jQuery(function(){
                     showMap(data[0]['features'][0], data[1]);
                 },
                 error: function(data){
-                    //showToast("Query issues", data.responseText, false);
-                    console.log(data);
+                    showToast("Query issues", data.responseText, false);
                     clearForm();
                 }
             });
@@ -268,7 +267,7 @@ function fillFormResult(searchId, resultId, middlewareUrl){
                         }
                     },
                     error: function(data){
-                        //showToast("Error", "Query issue on : " + middlewareUrl, false);
+                        showToast("Error", "Query issue on : " + middlewareUrl, false);
                         console.log(data);
                     }
                 });

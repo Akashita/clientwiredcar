@@ -18,22 +18,27 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/get-cars',(req,res) => {
-    var soap = require('strong-soap').soap;
-    var url = 'https://soapwiredcar.herokuapp.com/soapapi?wsdl';
-
-    /*
-    soap.createClient(url, function(err, client) {
-        client.get_electric_cars({}, function(err, result) {
-            console.log(result.get_electric_carsResult);
-        });
-       client.echo({str:"ergiue", cnt : 5}, function(err, result){
-              console.log(result.echoResult);
-       });
-    });
-    */
-    var obj = [{name:"Tesla",props: {model: "Tesla model 3", chargingtime: 20*60, autonomy: 250, img: 'https://www.automobile-magazine.fr/asset/cms/840x394/191795/config/139739/la-tesla-model-3.webp?webp=1'}}];
-    res.send(obj);
+app.post('/api/get-cars',(req,res) => {
+    if(req.body != null && req.body.search_text){
+        var text = req.body.search_text;
+        var soap = require('strong-soap').soap;
+        var url = 'https://soapwiredcar.herokuapp.com/soapapi?wsdl';
+        try {
+            soap.createClient(url, function(err, client) {
+                client.getCars({str:text}, function(err, result){
+                    var cars = [];
+                    JSON.parse(result.getCarsResult).forEach(element => {
+                        cars.push({name: element.model, props: element});
+                    });
+                    res.send(cars);
+                });
+            });
+        } catch (error) {
+            res.send(false);
+        }
+    } else {
+        res.send(false);
+    }
 });
 
 app.post('/api/get-path',(req,res) => {

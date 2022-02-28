@@ -140,8 +140,9 @@ app.post('/api/get-locality',(req,res) => {
                 response_data.push(locality);
             });
             res.send(JSON.stringify(response_data));
-        }).catch(error => {        
+        }).catch(error => {  
             console.log(error);
+            res.send(false);      
         });
     } else {
         res.send(false);
